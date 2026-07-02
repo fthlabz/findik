@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fındık Hesap Uzmanı</title>
+    <style>
+        /* Genel Ayarlar ve Mobil Uyum (Sağa Sola Taşmayı Önler) */
+        * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+        body { background-color: #eef2f3; color: #333; padding: 10px; display: flex; justify-content: center; }
+        
+        /* Ana Taşıyıcı Kutu */
+        .app-container { width: 100%; max-width: 500px; background: #ffffff; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 20px; }
+        
+        /* Üst Başlık */
+        .header { background: linear-gradient(135deg, #2b580c 0%, #4e9525 100%); color: white; padding: 20px 15px; text-align: center; }
+        .header h1 { font-size: 22px; margin-bottom: 5px; }
+        .header p { font-size: 13px; opacity: 0.9; }
+
+        /* Bölüm Ayarları */
+        .section { padding: 20px 15px; border-bottom: 1px solid #f0f0f0; }
+        .section-title { font-size: 16px; font-weight: 600; color: #2b580c; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
+        
+        /* Form Elemanları */
+        label { font-size: 13px; color: #666; font-weight: 500; margin-bottom: 5px; display: block; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background-color: #fafafa; transition: border 0.3s; }
+        input:focus, select:focus { outline: none; border-color: #4e9525; background-color: #fff; }
+        
+        /* Butonlar */
+        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        button:active { opacity: 0.8; }
+        .btn-add { background: #4e9525; color: white; }
+        .btn-whatsapp { background: #25D366; color: white; margin-top: 15px; }
+        .btn-clear { background: #fff; border: 1px solid #ff4d4f; color: #ff4d4f; margin-top: 10px; }
+        
+        /* Liste Tasarımı */
+        .expense-list { margin-top: 10px; max-height: 250px; overflow-y: auto; }
+        .expense-item { display: flex; justify-content: space-between; align-items: center; background: #fdfdfd; border: 1px solid #eee; border-left: 4px solid #ff4d4f; padding: 12px; border-radius: 8px; margin-bottom: 8px; }
+        .expense-info { display: flex; flex-direction: column; }
+        .expense-cat { font-size: 14px; font-weight: 600; color: #333; }
+        .expense-desc { font-size: 12px; color: #888; }
+        .expense-amount { font-weight: bold; color: #ff4d4f; }
+        .btn-delete { background: none; border: none; color: #999; font-size: 18px; width: auto; padding: 0 10px; }
+        
+        /* Özet Tablosu */
+        .summary-box { background: #f8faf9; border: 1px solid #e0e8e3; border-radius: 10px; padding: 15px; margin-top: 15px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #555; }
+        .summary-row.total { font-size: 18px; font-weight: bold; margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd; }
+        .profit { color: #4e9525; }
+        .loss { color: #ff4d4f; }
+
+        /* Footer / Telif */
+        .footer { text-align: center; padding: 15px; font-size: 12px; color: #888; background: #fafafa; border-top: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    
+    <!-- Üst Başlık -->
+    <div class="header">
+        <h1>Fındık Hesap Uzmanı</h1>
+        <p>Hasat, Maliyet ve Kâr/Zarar Takip Ekranı</p>
+    </div>
+
+    <!-- 1. Bölüm: Gelir (Hasat) -->
+    <div class="section">
+        <div class="section-title">1. Sezon Geliri (Hasat)</div>
+        <div style="display: flex; gap: 10px;">
+            <div style="flex: 1;">
+                <label>Toplam Rekolte (KG)</label>
+                <input type="number" id="incomeKg" placeholder="Örn: 2500" oninput="saveData()">
+            </div>
+            <div style="flex: 1;">
+                <label>KG Satış Fiyatı (TL)</label>
+                <input type="number" id="incomePrice" placeholder="Örn: 130" oninput="saveData()">
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Bölüm: Giderler (Maliyet) -->
+    <div class="section">
+        <div class="section-title">2. Masraf Kalemleri</div>
+        
+        <label>Gider Kategorisi</label>
+        <select id="expenseCategory">
+            <option value="İşçi Yevmiyesi (Dayıbaşı vb.)">İşçi Yevmiyesi (Dayıbaşı vb.)</option>
+            <option value="Gübreleme (Leonardit vb.)">Gübreleme (Leonardit vb.)</option>
+            <option value="İlaçlama (Dalkıran vb.)">İlaçlama (Dalkıran, Külleme vb.)</option>
+            <option value="Makine Yakıtı (Tırpan, Üfleme)">Makine Yakıtı (Tırpan, Üfleme)</option>
+            <option value="Patoz Gideri">Patoz Gideri</option>
+            <option value="Nakliye">Nakliye Gideri</option>
+            <option value="Bahçe Bakım / Budama">Bahçe Bakım / Budama</option>
+            <option value="Yemek / Kumanya">Yemek / Kumanya</option>
+            <option value="Diğer Giderler">Diğer Giderler</option>
+        </select>
+
+        <label>Kısa Açıklama (İsteğe Bağlı)</label>
+        <input type="text" id="expenseDesc" placeholder="Örn: Erenler bahçesi için">
+
+        <label>Tutar (TL)</label>
+        <input type="number" id="expenseAmount" placeholder="Örn: 1500">
+
+        <button class="btn-add" onclick="addExpense()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Masrafı Listeye Ekle
+        </button>
+
+        <div class="expense-list" id="expenseList">
+            <!-- Giderler buraya eklenecek -->
+        </div>
+    </div>
+
+    <!-- 3. Bölüm: Sonuç ve Rapor -->
+    <div class="section">
+        <div class="section-title">3. Sezon Özeti 
+            <span id="calcStatus" style="font-size: 11px; font-weight: normal; color: #888;">Otomatik Hesaplanır</span>
+        </div>
+        
+        <div class="summary-box">
+            <div class="summary-row">
+                <span>Beklenen Toplam Gelir:</span>
+                <span id="totalIncomeText">0 TL</span>
+            </div>
+            <div class="summary-row">
+                <span>Yapılan Toplam Masraf:</span>
+                <span id="totalExpenseText" style="color:#ff4d4f;">0 TL</span>
+            </div>
+            <div class="summary-row total" id="resultRow">
+                <span>Net Durum:</span>
+                <span id="netResultText">0 TL</span>
+            </div>
+        </div>
+
+        <button class="btn-whatsapp" onclick="shareWhatsApp()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            Sonucu WhatsApp'ta Paylaş
+        </button>
+
+        <button class="btn-clear" onclick="clearAllData()">Tüm Verileri Temizle (Yeni Sezon)</button>
+    </div>
+
+    <!-- Telif Hakkı (Copy Right) -->
+    <div class="footer">
+        &copy; 2026 Fındık Hesap Uzmanı<br>
+        <strong>Copyright Fatih</strong> - Tüm Hakları Saklıdır.
+    </div>
+
+</div>
+
+<script>
+    // Yerel hafızadan (localStorage) verileri çekme
+    let expenses = JSON.parse(localStorage.getItem('fatih_findik_gider')) || [];
+    
+    // Sayfa yüklendiğinde gelir bilgilerini doldur ve listeyi çiz
+    window.onload = function() {
+        document.getElementById('incomeKg').value = localStorage.getItem('fatih_findik_kg') || '';
+        document.getElementById('incomePrice').value = localStorage.getItem('fatih_findik_fiyat') || '';
+        renderApp();
+    };
+
+    // Gelir bilgilerini anlık kaydetme
+    function saveData() {
+        localStorage.setItem('fatih_findik_kg', document.getElementById('incomeKg').value);
+        localStorage.setItem('fatih_findik_fiyat', document.getElementById('incomePrice').value);
+        renderApp(); // Gelir değiştikçe özeti güncelle
+    }
+
+    // Masraf Ekleme Fonksiyonu
+    function addExpense() {
+        const cat = document.getElementById('expenseCategory').value;
+        const desc = document.getElementById('expenseDesc').value;
+        const amount = document.getElementById('expenseAmount').value;
+
+        if (amount && amount > 0) {
+            expenses.push({ category: cat, description: desc, amount: parseFloat(amount) });
+            localStorage.setItem('fatih_findik_gider', JSON.stringify(expenses));
+            
+            // Formu temizle
+            document.getElementById('expenseDesc').value = '';
+            document.getElementById('expenseAmount').value = '';
+            
+            renderApp();
+        } else {
+            alert("Lütfen geçerli bir tutar giriniz!");
+        }
+    }
+
+    // Masraf Silme Fonksiyonu
+    function deleteExpense(index) {
+        if(confirm('Bu masraf kalemini silmek istediğinize emin misiniz?')) {
+            expenses.splice(index, 1);
+            localStorage.setItem('fatih_findik_gider', JSON.stringify(expenses));
+            renderApp();
+        }
+    }
+
+    // Uygulamayı Çizme ve Hesaplama Fonksiyonu
+    function renderApp() {
+        const listDiv = document.getElementById('expenseList');
+        listDiv.innerHTML = '';
+        
+        let totalExpense = 0;
+
+        // Gider listesini oluştur
+        expenses.forEach((item, index) => {
+            totalExpense += item.amount;
+            listDiv.innerHTML += `
+                <div class="expense-item">
+                    <div class="expense-info">
+                        <span class="expense-cat">${item.category}</span>
+                        <span class="expense-desc">${item.description ? item.description : 'Açıklama yok'}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap:10px;">
+                        <span class="expense-amount">${item.amount.toLocaleString('tr-TR')} TL</span>
+                        <button class="btn-delete" onclick="deleteExpense(${index})">×</button>
+                    </div>
+                </div>
+            `;
+        });
+
+        // Gelir hesaplama
+        const kg = parseFloat(document.getElementById('incomeKg').value) || 0;
+        const price = parseFloat(document.getElementById('incomePrice').value) || 0;
+        const totalIncome = kg * price;
+        const netProfit = totalIncome - totalExpense;
+
+        // Özet ekranına yazdırma
+        document.getElementById('totalIncomeText').innerText = totalIncome.toLocaleString('tr-TR') + ' TL';
+        document.getElementById('totalExpenseText').innerText = totalExpense.toLocaleString('tr-TR') + ' TL';
+        
+        const netEl = document.getElementById('netResultText');
+        if (netProfit > 0) {
+            netEl.innerHTML = `<span class="profit">KÂR: +${netProfit.toLocaleString('tr-TR')} TL</span>`;
+        } else if (netProfit < 0) {
+            netEl.innerHTML = `<span class="loss">ZARAR: ${netProfit.toLocaleString('tr-TR')} TL</span>`;
+        } else {
+            netEl.innerHTML = `<span>BAŞABAŞ: 0 TL</span>`;
+        }
+    }
+
+    // WhatsApp Paylaşım
+    function shareWhatsApp() {
+        const kg = document.getElementById('incomeKg').value || 0;
+        const price = document.getElementById('incomePrice').value || 0;
+        const totalIncome = kg * price;
+        const totalExpense = expenses.reduce((sum, item) => sum + item.amount, 0);
+        const netProfit = totalIncome - totalExpense;
+        
+        let durumText = netProfit >= 0 ? `✅ *Net Kâr: ${netProfit.toLocaleString('tr-TR')} TL*` : `❌ *Net Zarar: ${Math.abs(netProfit).toLocaleString('tr-TR')} TL*`;
+
+        const message = `🌰 *Fındık Hasat & Maliyet Raporu* 🌰%0A%0A📦 *Rekolte:* ${kg} KG%0A💰 *KG Fiyatı:* ${price} TL%0A%0A🟢 *Toplam Gelir:* ${totalIncome.toLocaleString('tr-TR')} TL%0A🔴 *Toplam Masraf:* ${totalExpense.toLocaleString('tr-TR')} TL%0A%0A${durumText}%0A%0A_Fındık Hesap Uzmanı ile hesaplanmıştır._`;
+        
+        window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
+
+    // Tüm Verileri Sil
+    function clearAllData() {
+        if(confirm('Dikkat! Tüm masraf ve gelir geçmişiniz silinecek. Yeni sezona başlamak istediğinize emin misiniz?')) {
+            localStorage.removeItem('fatih_findik_gider');
+            localStorage.removeItem('fatih_findik_kg');
+            localStorage.removeItem('fatih_findik_fiyat');
+            expenses = [];
+            document.getElementById('incomeKg').value = '';
+            document.getElementById('incomePrice').value = '';
+            renderApp();
+        }
+    }
+</script>
+
+</body>
+</html>

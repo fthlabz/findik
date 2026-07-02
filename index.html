@@ -5,142 +5,239 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Fındık Hesap Uzmanı</title>
     <style>
-        /* Genel Ayarlar ve Mobil Uyum (Sağa Sola Taşmayı Önler) */
+        /* Modern ve Esnek Tasarım Sıfırlaması */
         * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-        body { background-color: #eef2f3; color: #333; padding: 10px; display: flex; justify-content: center; }
+        body { background-color: #f0f4f1; color: #2d3748; padding: 15px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
         
-        /* Ana Taşıyıcı Kutu */
-        .app-container { width: 100%; max-width: 500px; background: #ffffff; border-radius: 12px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); overflow: hidden; margin-bottom: 20px; }
+        /* Ana Konteyner */
+        .app-container { width: 100%; max-width: 500px; background: #ffffff; border-radius: 16px; box-shadow: 0 10px 25px rgba(43, 88, 12, 0.08); overflow: hidden; margin-bottom: 30px; }
         
-        /* Üst Başlık */
-        .header { background: linear-gradient(135deg, #2b580c 0%, #4e9525 100%); color: white; padding: 20px 15px; text-align: center; }
-        .header h1 { font-size: 22px; margin-bottom: 5px; }
-        .header p { font-size: 13px; opacity: 0.9; }
+        /* Premium Başlık Alanı */
+        .header { background: linear-gradient(135deg, #1e3f07 0%, #3a751c 100%); color: white; padding: 24px 20px; text-align: center; position: relative; }
+        .header h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+        .header p { font-size: 13px; opacity: 0.85; font-weight: 400; }
 
-        /* Bölüm Ayarları */
-        .section { padding: 20px 15px; border-bottom: 1px solid #f0f0f0; }
-        .section-title { font-size: 16px; font-weight: 600; color: #2b580c; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; }
+        /* Bölüm Yapısı */
+        .section { padding: 22px 20px; border-bottom: 1px solid #f2f6f3; }
+        .section:last-of-type { border-bottom: none; }
+        .section-title { font-size: 16px; font-weight: 700; color: #1e3f07; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
         
-        /* Form Elemanları */
-        label { font-size: 13px; color: #666; font-weight: 500; margin-bottom: 5px; display: block; }
-        input, select { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; background-color: #fafafa; transition: border 0.3s; }
-        input:focus, select:focus { outline: none; border-color: #4e9525; background-color: #fff; }
+        /* Form Bileşenleri */
+        label { font-size: 13px; color: #4a5568; font-weight: 600; margin-bottom: 6px; display: block; }
+        input, select { width: 100%; padding: 12px 14px; margin-bottom: 16px; border: 1.5px solid #e2e8f0; border-radius: 10px; font-size: 15px; background-color: #f8fafc; color: #1a202c; transition: all 0.25s ease; -webkit-appearance: none; }
+        select { background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234a5568' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 14px center; background-size: 16px; padding-right: 40px; }
+        input:focus, select:focus { outline: none; border-color: #3a751c; background-color: #fff; box-shadow: 0 0 0 3px rgba(58, 117, 28, 0.1); }
         
-        /* Butonlar */
-        button { width: 100%; padding: 14px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: opacity 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        button:active { opacity: 0.8; }
-        .btn-add { background: #4e9525; color: white; }
-        .btn-whatsapp { background: #25D366; color: white; margin-top: 15px; }
-        .btn-clear { background: #fff; border: 1px solid #ff4d4f; color: #ff4d4f; margin-top: 10px; }
-        
-        /* Liste Tasarımı */
-        .expense-list { margin-top: 10px; max-height: 250px; overflow-y: auto; }
-        .expense-item { display: flex; justify-content: space-between; align-items: center; background: #fdfdfd; border: 1px solid #eee; border-left: 4px solid #ff4d4f; padding: 12px; border-radius: 8px; margin-bottom: 8px; }
-        .expense-info { display: flex; flex-direction: column; }
-        .expense-cat { font-size: 14px; font-weight: 600; color: #333; }
-        .expense-desc { font-size: 12px; color: #888; }
-        .expense-amount { font-weight: bold; color: #ff4d4f; }
-        .btn-delete { background: none; border: none; color: #999; font-size: 18px; width: auto; padding: 0 10px; }
-        
-        /* Özet Tablosu */
-        .summary-box { background: #f8faf9; border: 1px solid #e0e8e3; border-radius: 10px; padding: 15px; margin-top: 15px; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #555; }
-        .summary-row.total { font-size: 18px; font-weight: bold; margin-top: 12px; padding-top: 12px; border-top: 1px solid #ddd; }
-        .profit { color: #4e9525; }
-        .loss { color: #ff4d4f; }
+        /* Profesyonel Para Giriş Tasarımı */
+        .currency-wrapper { position: relative; display: flex; align-items: center; margin-bottom: 16px; }
+        .currency-wrapper input { margin-bottom: 0; padding-left: 34px; }
+        .currency-symbol { position: absolute; left: 14px; font-weight: 700; color: #718096; font-size: 15px; pointer-events: none; }
 
-        /* Footer / Telif */
-        .footer { text-align: center; padding: 15px; font-size: 12px; color: #888; background: #fafafa; border-top: 1px solid #eee; }
+        /* Seçim Grubu / Segment Kontrolü (Gübre ve İlaçlama Modu için) */
+        .segment-control { display: flex; background: #edf2f7; padding: 4px; border-radius: 10px; margin-bottom: 16px; }
+        .segment-btn { flex: 1; background: none; border: none; padding: 8px; font-size: 13px; font-weight: 600; color: #4a5568; cursor: pointer; border-radius: 8px; transition: all 0.2s; }
+        .segment-btn.active { background: #ffffff; color: #1e3f07; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+
+        /* Dinamik Giriş Alanı Konteynerleri */
+        .dynamic-field-group { display: none; background: #f8faf9; border-radius: 12px; padding: 14px 14px 0 14px; border: 1px dashed #cbd5e1; margin-bottom: 16px; }
+
+        /* Buton Mimarisi */
+        button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-add { background: #3a751c; color: white; box-shadow: 0 4px 12px rgba(58, 117, 28, 0.15); }
+        .btn-add:active { transform: scale(0.98); }
+        .btn-whatsapp { background: #25D366; color: white; margin-top: 18px; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.15); }
+        .btn-clear { background: #fff; border: 1px solid #ef4444; color: #ef4444; margin-top: 12px; font-size: 13px; padding: 10px; }
+        
+        /* Gider Listesi Tasarımı */
+        .expense-list { margin-top: 10px; max-height: 320px; overflow-y: auto; padding-right: 2px; }
+        .expense-item { display: flex; justify-content: space-between; align-items: center; background: #ffffff; border: 1px solid #e2e8f0; border-left: 4px solid #ef4444; padding: 14px; border-radius: 10px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.01); }
+        .expense-info { display: flex; flex-direction: column; gap: 2px; padding-right: 10px; }
+        .expense-main-cat { font-size: 14px; font-weight: 700; color: #1a202c; }
+        .expense-sub-cat { font-size: 13px; font-weight: 600; color: #4a5568; }
+        .expense-calc-details { font-size: 12px; color: #718096; margin-top: 2px; font-style: italic; }
+        .expense-note { font-size: 11px; color: #a0aec0; margin-top: 1px; }
+        .expense-right-block { display: flex; align-items: center; gap: 12px; text-align: right; flex-shrink: 0; }
+        .expense-amount { font-size: 15px; font-weight: 700; color: #ef4444; white-space: nowrap; }
+        .btn-delete { background: #fee2e2; border: none; color: #ef4444; font-size: 16px; width: 28px; height: 28px; border-radius: 50%; padding: 0; display: flex; align-items: center; justify-content: center; }
+        
+        /* Özet Kutusu Tasarımı */
+        .summary-box { background: #f4f8f5; border: 1px solid #e1ebe3; border-radius: 12px; padding: 16px; margin-top: 5px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: #4a5568; font-weight: 500; }
+        .summary-row.total { font-size: 18px; font-weight: 800; margin-bottom: 0; padding-top: 12px; border-top: 1.5px dashed #cbd5e1; color: #1a202c; }
+        .profit { color: #3a751c; }
+        .loss { color: #ef4444; }
+
+        /* Yenilenmiş Sayfa Alt Bilgisi */
+        .footer { text-align: center; padding: 18px; font-size: 12px; color: #718096; background: #f8fafc; border-top: 1px solid #edf2f7; line-height: 1.5; }
+        .footer strong { color: #1e3f07; }
     </style>
 </head>
 <body>
 
 <div class="app-container">
     
-    <!-- Üst Başlık -->
     <div class="header">
         <h1>Fındık Hesap Uzmanı</h1>
-        <p>Hasat, Maliyet ve Kâr/Zarar Takip Ekranı</p>
+        <p>Gelişmiş Hasat Analiz ve Akıllı Maliyet Paneli</p>
     </div>
 
-    <!-- 1. Bölüm: Gelir (Hasat) -->
     <div class="section">
         <div class="section-title">1. Sezon Geliri (Hasat)</div>
-        <div style="display: flex; gap: 10px;">
+        <div style="display: flex; gap: 12px;">
             <div style="flex: 1;">
-                <label>Toplam Rekolte (KG)</label>
-                <input type="number" id="incomeKg" placeholder="Örn: 2500" oninput="saveData()">
+                <label>Toplam Rekolte</label>
+                <div style="position: relative; display: flex; align-items: center;">
+                    <input type="number" id="incomeKg" placeholder="Örn: 2500" oninput="saveData()" style="padding-right: 40px;">
+                    <span style="position: absolute; right: 14px; font-size: 13px; font-weight:600; color:#718096; pointer-events:none;">KG</span>
+                </div>
             </div>
             <div style="flex: 1;">
-                <label>KG Satış Fiyatı (TL)</label>
-                <input type="number" id="incomePrice" placeholder="Örn: 130" oninput="saveData()">
+                <label>Satış Fiyatı</label>
+                <div class="currency-wrapper">
+                    <span class="currency-symbol">₺</span>
+                    <input type="number" id="incomePrice" placeholder="Örn: 130" oninput="saveData()">
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- 2. Bölüm: Giderler (Maliyet) -->
     <div class="section">
-        <div class="section-title">2. Masraf Kalemleri</div>
+        <div class="section-title">2. Akıllı Masraf Girişi</div>
         
-        <label>Gider Kategorisi</label>
-        <select id="expenseCategory">
-            <option value="İşçi Yevmiyesi (Dayıbaşı vb.)">İşçi Yevmiyesi (Dayıbaşı vb.)</option>
-            <option value="Gübreleme (Leonardit vb.)">Gübreleme (Leonardit vb.)</option>
-            <option value="İlaçlama (Dalkıran vb.)">İlaçlama (Dalkıran, Külleme vb.)</option>
-            <option value="Makine Yakıtı (Tırpan, Üfleme)">Makine Yakıtı (Tırpan, Üfleme)</option>
-            <option value="Patoz Gideri">Patoz Gideri</option>
-            <option value="Nakliye">Nakliye Gideri</option>
-            <option value="Bahçe Bakım / Budama">Bahçe Bakım / Budama</option>
+        <label>Ana Kategori</label>
+        <select id="mainCategory" onchange="handleMainCategoryChange()">
+            <option value="İşçilik">İşçilik</option>
+            <option value="Kendi İşçiliğim">Kendi İşçiliğim</option>
+            <option value="Gübreleme">Gübreleme</option>
+            <option value="İlaçlama">İlaçlama</option>
+            <option value="Makine Yakıtı">Makine Yakıtı</option>
+            <option value="Bahçe Bakımı">Bahçe Bakımı</option>
+            <option value="Patoz">Patoz</option>
+            <option value="Nakliye">Nakliye</option>
             <option value="Yemek / Kumanya">Yemek / Kumanya</option>
             <option value="Diğer Giderler">Diğer Giderler</option>
         </select>
 
-        <label>Kısa Açıklama (İsteğe Bağlı)</label>
-        <input type="text" id="expenseDesc" placeholder="Örn: Erenler bahçesi için">
+        <label>Alt Kategori</label>
+        <select id="subCategory"></select>
 
-        <label>Tutar (TL)</label>
-        <input type="number" id="expenseAmount" placeholder="Örn: 1500">
+        <div id="fields-iscilik" class="dynamic-field-group">
+            <label>Günlük Ücret</label>
+            <div class="currency-wrapper">
+                <span class="currency-symbol">₺</span>
+                <input type="number" id="input-iscilik-ucret" placeholder="Örn: 1500">
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <div style="flex: 1;">
+                    <label>Çalışan Sayısı</label>
+                    <input type="number" id="input-iscilik-calisan" placeholder="Örn: 4">
+                </div>
+                <div style="flex: 1;">
+                    <label>Gün Sayısı</label>
+                    <input type="number" id="input-iscilik-gun" placeholder="Örn: 3">
+                </div>
+            </div>
+        </div>
+
+        <div id="fields-kendi-iscilik" class="dynamic-field-group">
+            <label>Günlük Ücret Karşılığı</label>
+            <div class="currency-wrapper">
+                <span class="currency-symbol">₺</span>
+                <input type="number" id="input-kendi-ucret" placeholder="Örn: 1500">
+            </div>
+            <label>Çalışan Gün Sayısı</label>
+            <input type="number" id="input-kendi-gun" placeholder="Örn: 5">
+        </div>
+
+        <div id="fields-yakit" class="dynamic-field-group">
+            <label>Yakıt Türü</label>
+            <select id="input-yakit-turu">
+                <option value="Benzin">Benzin</option>
+                <option value="Mazot">Mazot</option>
+            </select>
+            <div style="display: flex; gap: 12px;">
+                <div style="flex: 1;">
+                    <label>Alınan Litre</label>
+                    <input type="number" id="input-yakit-litre" placeholder="Örn: 8" step="0.01">
+                </div>
+                <div style="flex: 1;">
+                    <label>Litre Fiyatı</label>
+                    <div class="currency-wrapper">
+                        <span class="currency-symbol">₺</span>
+                        <input type="number" id="input-yakit-fiyat" placeholder="Örn: 62" step="0.01">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="fields-adet-hesaplama" class="dynamic-field-group">
+            <div class="segment-control">
+                <button type="button" class="segment-btn active" id="seg-mode-calc" onclick="switchInputMode('calc')">Hesaplama Modu</button>
+                <button type="button" class="segment-btn" id="seg-mode-direct" onclick="switchInputMode('direct')">Direkt Tutar Gir</button>
+            </div>
+            
+            <div id="calc-mode-inputs">
+                <div style="display: flex; gap: 12px;">
+                    <div style="flex: 1;">
+                        <label id="label-adet-sayisi">Çuval/Adet Sayısı</label>
+                        <input type="number" id="input-adet-sayi" placeholder="Örn: 5">
+                    </div>
+                    <div style="flex: 1;">
+                        <label id="label-adet-fiyati">Birim Fiyatı</label>
+                        <div class="currency-wrapper">
+                            <span class="currency-symbol">₺</span>
+                            <input type="number" id="input-adet-fiyat" placeholder="Örn: 780">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="fields-direkt-tutar" class="dynamic-field-group">
+            <label>Toplam Gider Tutarı</label>
+            <div class="currency-wrapper">
+                <span class="currency-symbol">₺</span>
+                <input type="number" id="input-standart-tutar" placeholder="Örn: 4500">
+            </div>
+        </div>
+
+        <label>Not (İsteğe Bağlı)</label>
+        <input type="text" id="expenseNote" placeholder="Örn: Harman alanı masrafı veya firma adı">
 
         <button class="btn-add" onclick="addExpense()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-            Masrafı Listeye Ekle
+            Masrafı Hesapla ve Ekle
         </button>
 
-        <div class="expense-list" id="expenseList">
-            <!-- Giderler buraya eklenecek -->
-        </div>
+        <div class="expense-list" id="expenseList"></div>
     </div>
 
-    <!-- 3. Bölüm: Sonuç ve Rapor -->
     <div class="section">
-        <div class="section-title">3. Sezon Özeti 
-            <span id="calcStatus" style="font-size: 11px; font-weight: normal; color: #888;">Otomatik Hesaplanır</span>
-        </div>
+        <div class="section-title">3. Sezon Muhasebe Özeti</div>
         
         <div class="summary-box">
             <div class="summary-row">
-                <span>Beklenen Toplam Gelir:</span>
-                <span id="totalIncomeText">0 TL</span>
+                <span>Brüt Toplam Gelir:</span>
+                <span id="totalIncomeText" style="font-weight: 700;">0 ₺</span>
             </div>
             <div class="summary-row">
-                <span>Yapılan Toplam Masraf:</span>
-                <span id="totalExpenseText" style="color:#ff4d4f;">0 TL</span>
+                <span>Toplam Üretim Maliyeti:</span>
+                <span id="totalExpenseText" style="color:#ef4444; font-weight: 700;">0 ₺</span>
             </div>
             <div class="summary-row total" id="resultRow">
-                <span>Net Durum:</span>
-                <span id="netResultText">0 TL</span>
+                <span>Mali Net Durum:</span>
+                <span id="netResultText">0 ₺</span>
             </div>
         </div>
 
         <button class="btn-whatsapp" onclick="shareWhatsApp()">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-            Sonucu WhatsApp'ta Paylaş
+            Analiz Sonucunu WhatsApp'ta Paylaş
         </button>
 
-        <button class="btn-clear" onclick="clearAllData()">Tüm Verileri Temizle (Yeni Sezon)</button>
+        <button class="btn-clear" onclick="clearAllData()">Sistemdeki Tüm Verileri Sıfırla</button>
     </div>
 
-    <!-- Telif Hakkı (Copy Right) -->
     <div class="footer">
         &copy; 2026 Fındık Hesap Uzmanı<br>
         <strong>Copyright Fatih</strong> - Tüm Hakları Saklıdır.
@@ -149,97 +246,231 @@
 </div>
 
 <script>
-    // Yerel hafızadan (localStorage) verileri çekme
+    // Alt Kategori Veri Sözlüğü
+    const subCategoriesMap = {
+        "İşçilik": ["Hasat", "Filiz Alma", "Dip Temizliği", "Ot Alma", "Gübre Atma", "İlaçlama İşçiliği", "Budama", "Harman", "Çuval Taşıma", "Dayıbaşı", "Diğer"],
+        "Kendi İşçiliğim": ["Hasat", "Filiz Alma", "Dip Temizliği", "Ot Alma", "Gübre Atma", "İlaçlama", "Budama", "Harman", "Diğer"],
+        "Gübreleme": ["Leonardit", "CAN 26", "Üre", "Organik Gübre", "Kompoze", "Potasyum", "Yaprak Gübresi", "Diğer"],
+        "İlaçlama": ["Dalkıran", "Külleme", "Böcek İlacı", "Ot İlacı", "Yaprak İlacı", "Diğer"],
+        "Makine Yakıtı": ["Tırpan", "Motorlu Testere", "Üfleme Makinesi", "Traktör", "Patpat", "Jeneratör", "Diğer"],
+        "Bahçe Bakımı": ["Budama", "Ot Temizliği", "Dal Toplama", "Bahçe Temizliği", "Diğer"],
+        "Patoz": ["Patoz Ücreti", "Çuvallama", "Harman", "Diğer"],
+        "Nakliye": ["Kamyon", "Traktör", "Patpat", "Diğer"],
+        "Yemek / Kumanya": ["Kahvaltı", "Öğle Yemeği", "Akşam Yemeği", "Su", "Kumanya", "Diğer"],
+        "Diğer Giderler": ["Diğer"]
+    };
+
     let expenses = JSON.parse(localStorage.getItem('fatih_findik_gider')) || [];
-    
-    // Sayfa yüklendiğinde gelir bilgilerini doldur ve listeyi çiz
+    let currentGubreIlacMode = 'calc'; // 'calc' veya 'direct'
+
     window.onload = function() {
         document.getElementById('incomeKg').value = localStorage.getItem('fatih_findik_kg') || '';
         document.getElementById('incomePrice').value = localStorage.getItem('fatih_findik_fiyat') || '';
+        handleMainCategoryChange();
         renderApp();
     };
 
-    // Gelir bilgilerini anlık kaydetme
     function saveData() {
         localStorage.setItem('fatih_findik_kg', document.getElementById('incomeKg').value);
         localStorage.setItem('fatih_findik_fiyat', document.getElementById('incomePrice').value);
-        renderApp(); // Gelir değiştikçe özeti güncelle
+        renderApp();
     }
 
-    // Masraf Ekleme Fonksiyonu
-    function addExpense() {
-        const cat = document.getElementById('expenseCategory').value;
-        const desc = document.getElementById('expenseDesc').value;
-        const amount = document.getElementById('expenseAmount').value;
+    // Ana Kategori Değiştiğinde Form Alanlarını Ayarlama Mantığı
+    function handleMainCategoryChange() {
+        const mainCat = document.getElementById('mainCategory').value;
+        const subCatSelect = document.getElementById('subCategory');
+        
+        // Alt kategorileri yükleme
+        subCatSelect.innerHTML = '';
+        subCategoriesMap[mainCat].forEach(sub => {
+            let opt = document.createElement('option');
+            opt.value = sub;
+            opt.innerText = sub;
+            subCatSelect.appendChild(opt);
+        });
 
-        if (amount && amount > 0) {
-            expenses.push({ category: cat, description: desc, amount: parseFloat(amount) });
-            localStorage.setItem('fatih_findik_gider', JSON.stringify(expenses));
+        // Tüm dinamik alan gruplarını gizleme
+        document.getElementById('fields-iscilik').style.display = 'none';
+        document.getElementById('fields-kendi-iscilik').style.display = 'none';
+        document.getElementById('fields-yakit').style.display = 'none';
+        document.getElementById('fields-adet-hesaplama').style.display = 'none';
+        document.getElementById('fields-direkt-tutar').style.display = 'none';
+
+        // Seçilen ana kategoriye göre özel alan açma
+        if (mainCat === 'İşçilik') {
+            document.getElementById('fields-iscilik').style.display = 'block';
+        } else if (mainCat === 'Kendi İşçiliğim') {
+            document.getElementById('fields-kendi-iscilik').style.display = 'block';
+        } else if (mainCat === 'Makine Yakıtı') {
+            document.getElementById('fields-yakit').style.display = 'block';
+        } else if (mainCat === 'Gübreleme' || mainCat === 'İlaçlama') {
+            document.getElementById('fields-adet-hesaplama').style.display = 'block';
             
-            // Formu temizle
-            document.getElementById('expenseDesc').value = '';
-            document.getElementById('expenseAmount').value = '';
-            
-            renderApp();
+            // Etiketleri güncelleme
+            if(mainCat === 'Gübreleme') {
+                document.getElementById('label-adet-sayisi').innerText = 'Çuval Sayısı';
+                document.getElementById('label-adet-fiyati').innerText = 'Çuval Fiyatı';
+            } else {
+                document.getElementById('label-adet-sayisi').innerText = 'Adet Sayısı';
+                document.getElementById('label-adet-fiyati').innerText = 'Ürün Fiyatı';
+            }
+            switchInputMode(currentGubreIlacMode);
         } else {
-            alert("Lütfen geçerli bir tutar giriniz!");
+            document.getElementById('fields-direkt-tutar').style.display = 'block';
         }
     }
 
-    // Masraf Silme Fonksiyonu
+    // Gübre ve İlaç İçi Alt Segment Seçimi
+    function switchInputMode(mode) {
+        currentGubreIlacMode = mode;
+        document.getElementById('seg-mode-calc').classList.toggle('active', mode === 'calc');
+        document.getElementById('seg-mode-direct').classList.toggle('active', mode === 'direct');
+        
+        document.getElementById('calc-mode-inputs').style.display = mode === 'calc' ? 'block' : 'none';
+        document.getElementById('fields-direkt-tutar').style.display = mode === 'direct' ? 'block' : 'none';
+    }
+
+    // Listeye Masraf Ekleme İşlemi
+    function addExpense() {
+        const mainCat = document.getElementById('mainCategory').value;
+        const subCat = document.getElementById('subCategory').value;
+        const note = document.getElementById('expenseNote').value.trim();
+        
+        let calculatedAmount = 0;
+        let detailsText = '';
+
+        if (mainCat === 'İşçilik') {
+            const ucret = parseFloat(document.getElementById('input-iscilik-ucret').value) || 0;
+            const calisan = parseInt(document.getElementById('input-iscilik-calisan').value) || 0;
+            const gun = parseInt(document.getElementById('input-iscilik-gun').value) || 0;
+            
+            if(ucret <= 0 || calisan <= 0 || gun <= 0) { alert('Lütfen işçilik alanlarını eksiksiz doldurun!'); return; }
+            calculatedAmount = ucret * calisan * gun;
+            detailsText = `${calisan} kişi × ${gun} gün × ${ucret.toLocaleString('tr-TR')} ₺`;
+            
+            // Temizle
+            document.getElementById('input-iscilik-ucret').value = '';
+            document.getElementById('input-iscilik-calisan').value = '';
+            document.getElementById('input-iscilik-gun').value = '';
+
+        } else if (mainCat === 'Kendi İşçiliğim') {
+            const ucret = parseFloat(document.getElementById('input-kendi-ucret').value) || 0;
+            const gun = parseInt(document.getElementById('input-kendi-gun').value) || 0;
+            
+            if(ucret <= 0 || gun <= 0) { alert('Lütfen kendi işçilik alanlarını eksiksiz doldurun!'); return; }
+            calculatedAmount = ucret * gun;
+            detailsText = `${gun} gün × ${ucret.toLocaleString('tr-TR')} ₺`;
+            
+            document.getElementById('input-kendi-ucret').value = '';
+            document.getElementById('input-kendi-gun').value = '';
+
+        } else if (mainCat === 'Makine Yakıtı') {
+            const tur = document.getElementById('input-yakit-turu').value;
+            const litre = parseFloat(document.getElementById('input-yakit-litre').value) || 0;
+            const fiyat = parseFloat(document.getElementById('input-yakit-fiyat').value) || 0;
+            
+            if(litre <= 0 || fiyat <= 0) { alert('Lütfen yakıt miktarı ve litre fiyatını girin!'); return; }
+            calculatedAmount = litre * fiyat;
+            detailsText = `${litre} Litre (${tur}) × ${fiyat.toLocaleString('tr-TR')} ₺`;
+            
+            document.getElementById('input-yakit-litre').value = '';
+            document.getElementById('input-yakit-fiyat').value = '';
+
+        } else if (mainCat === 'Gübreleme' || mainCat === 'İlaçlama') {
+            if (currentGubreIlacMode === 'calc') {
+                const sayi = parseInt(document.getElementById('input-adet-sayi').value) || 0;
+                const birimFiyat = parseFloat(document.getElementById('input-adet-fiyat').value) || 0;
+                
+                if(sayi <= 0 || birimFiyat <= 0) { alert('Lütfen adet ve fiyat alanlarını girin!'); return; }
+                calculatedAmount = sayi * birimFiyat;
+                const birimEtiketi = (mainCat === 'Gübreleme') ? 'Çuval' : 'Adet';
+                detailsText = `${sayi} ${birimEtiketi} × ${birimFiyat.toLocaleString('tr-TR')} ₺`;
+                
+                document.getElementById('input-adet-sayi').value = '';
+                document.getElementById('input-adet-fiyat').value = '';
+            } else {
+                const tutar = parseFloat(document.getElementById('input-standart-tutar').value) || 0;
+                if(tutar <= 0) { alert('Lütfen geçerli bir tutar girin!'); return; }
+                calculatedAmount = tutar;
+                detailsText = 'Direkt Tutar Girişi';
+                document.getElementById('input-standart-tutar').value = '';
+            }
+        } else {
+            // Diğer standart kategoriler doğrudan tutar alır
+            const tutar = parseFloat(document.getElementById('input-standart-tutar').value) || 0;
+            if(tutar <= 0) { alert('Lütfen geçerli bir tutar girin!'); return; }
+            calculatedAmount = tutar;
+            detailsText = 'Direkt Tutar Girişi';
+            document.getElementById('input-standart-tutar').value = '';
+        }
+
+        // Listeye veriyi ekleme ve localStorage güncelleme
+        expenses.push({
+            mainCat: mainCat,
+            subCat: subCat,
+            amount: calculatedAmount,
+            details: detailsText,
+            note: note
+        });
+
+        localStorage.setItem('fatih_findik_gider', JSON.stringify(expenses));
+        document.getElementById('expenseNote').value = '';
+        renderApp();
+    }
+
     function deleteExpense(index) {
-        if(confirm('Bu masraf kalemini silmek istediğinize emin misiniz?')) {
+        if(confirm('Seçilen bu masraf kalemini listeden silmek istiyor musunuz?')) {
             expenses.splice(index, 1);
             localStorage.setItem('fatih_findik_gider', JSON.stringify(expenses));
             renderApp();
         }
     }
 
-    // Uygulamayı Çizme ve Hesaplama Fonksiyonu
+    // Uygulama Çizim ve Hesaplama Mekanizması
     function renderApp() {
         const listDiv = document.getElementById('expenseList');
         listDiv.innerHTML = '';
         
         let totalExpense = 0;
 
-        // Gider listesini oluştur
         expenses.forEach((item, index) => {
             totalExpense += item.amount;
             listDiv.innerHTML += `
                 <div class="expense-item">
                     <div class="expense-info">
-                        <span class="expense-cat">${item.category}</span>
-                        <span class="expense-desc">${item.description ? item.description : 'Açıklama yok'}</span>
+                        <span class="expense-main-cat">${item.mainCat}</span>
+                        <span class="expense-sub-cat">${item.subCat}</span>
+                        <span class="expense-calc-details">${item.details}</span>
+                        ${item.note ? `<span class="expense-note">📌 Not: ${item.note}</span>` : ''}
                     </div>
-                    <div style="display: flex; align-items: center; gap:10px;">
-                        <span class="expense-amount">${item.amount.toLocaleString('tr-TR')} TL</span>
+                    <div class="expense-right-block">
+                        <span class="expense-amount">${item.amount.toLocaleString('tr-TR')} ₺</span>
                         <button class="btn-delete" onclick="deleteExpense(${index})">×</button>
                     </div>
                 </div>
             `;
         });
 
-        // Gelir hesaplama
         const kg = parseFloat(document.getElementById('incomeKg').value) || 0;
         const price = parseFloat(document.getElementById('incomePrice').value) || 0;
         const totalIncome = kg * price;
         const netProfit = totalIncome - totalExpense;
 
-        // Özet ekranına yazdırma
-        document.getElementById('totalIncomeText').innerText = totalIncome.toLocaleString('tr-TR') + ' TL';
-        document.getElementById('totalExpenseText').innerText = totalExpense.toLocaleString('tr-TR') + ' TL';
+        document.getElementById('totalIncomeText').innerText = totalIncome.toLocaleString('tr-TR') + ' ₺';
+        document.getElementById('totalExpenseText').innerText = totalExpense.toLocaleString('tr-TR') + ' ₺';
         
         const netEl = document.getElementById('netResultText');
         if (netProfit > 0) {
-            netEl.innerHTML = `<span class="profit">KÂR: +${netProfit.toLocaleString('tr-TR')} TL</span>`;
+            netEl.innerHTML = `<span class="profit">KÂR: +${netProfit.toLocaleString('tr-TR')} ₺</span>`;
         } else if (netProfit < 0) {
-            netEl.innerHTML = `<span class="loss">ZARAR: ${netProfit.toLocaleString('tr-TR')} TL</span>`;
+            netEl.innerHTML = `<span class="loss">ZARAR: ${netProfit.toLocaleString('tr-TR')} ₺</span>`;
         } else {
-            netEl.innerHTML = `<span>BAŞABAŞ: 0 TL</span>`;
+            netEl.innerHTML = `<span>BAŞABAŞ: 0 ₺</span>`;
         }
     }
 
-    // WhatsApp Paylaşım
+    // Profesyonel WhatsApp Paylaşımı
     function shareWhatsApp() {
         const kg = document.getElementById('incomeKg').value || 0;
         const price = document.getElementById('incomePrice').value || 0;
@@ -247,22 +478,29 @@
         const totalExpense = expenses.reduce((sum, item) => sum + item.amount, 0);
         const netProfit = totalIncome - totalExpense;
         
-        let durumText = netProfit >= 0 ? `✅ *Net Kâr: ${netProfit.toLocaleString('tr-TR')} TL*` : `❌ *Net Zarar: ${Math.abs(netProfit).toLocaleString('tr-TR')} TL*`;
+        let durumText = netProfit >= 0 ? `✅ *Net Kâr: ${netProfit.toLocaleString('tr-TR')} ₺*` : `❌ *Net Zarar: ${Math.abs(netProfit).toLocaleString('tr-TR')} ₺*`;
 
-        const message = `🌰 *Fındık Hasat & Maliyet Raporu* 🌰%0A%0A📦 *Rekolte:* ${kg} KG%0A💰 *KG Fiyatı:* ${price} TL%0A%0A🟢 *Toplam Gelir:* ${totalIncome.toLocaleString('tr-TR')} TL%0A🔴 *Toplam Masraf:* ${totalExpense.toLocaleString('tr-TR')} TL%0A%0A${durumText}%0A%0A_Fındık Hesap Uzmanı ile hesaplanmıştır._`;
+        let message = `🌰 *Fındık Hesap Uzmanı Raporu* 🌰%0A%0A`;
+        message += `📦 *Toplam Rekolte:* ${kg} KG%0A`;
+        message += `💰 *Taban Satış Fiyatı:* ${price} ₺%0A%0A`;
+        message += `🟢 *Brüt Toplam Gelir:* ${totalIncome.toLocaleString('tr-TR')} ₺%0A`;
+        message += `🔴 *Toplam Üretim Maliyeti:* ${totalExpense.toLocaleString('tr-TR')} ₺%0A%0A`;
+        message += `${durumText}%0A%0A`;
+        message += `_Fındık Hesap Uzmanı (Copyright Fatih) ile hazırlanmıştır._`;
         
         window.open(`https://wa.me/?text=${message}`, '_blank');
     }
 
-    // Tüm Verileri Sil
+    // Sezon Sıfırlama
     function clearAllData() {
-        if(confirm('Dikkat! Tüm masraf ve gelir geçmişiniz silinecek. Yeni sezona başlamak istediğinize emin misiniz?')) {
+        if(confirm('Dikkat! Mevcut tüm hasat ve masraf kalemi veritabanınız kalıcı olarak silinecektir. Yeni sezona başlamak istediğinize emin misiniz?')) {
             localStorage.removeItem('fatih_findik_gider');
             localStorage.removeItem('fatih_findik_kg');
             localStorage.removeItem('fatih_findik_fiyat');
             expenses = [];
             document.getElementById('incomeKg').value = '';
             document.getElementById('incomePrice').value = '';
+            handleMainCategoryChange();
             renderApp();
         }
     }
